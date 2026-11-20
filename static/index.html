@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Iris AI | Clasificador inteligente</title>
+
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --surface: #ffffff;
+      --surface-soft: #f8faf7;
+      --text: #172b25;
+      --muted: #788780;
+      --green: #167653;
+      --green-dark: #105c40;
+      --green-light: #e5f3eb;
+      --border: #e5ebe6;
+      --shadow: 0 12px 35px rgba(28, 58, 43, .055);
+      --danger: #c33d3d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    header {
+      padding: 23px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.75);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 750;
+      letter-spacing: -.5px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 22px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #25a56d;
+    }
+
+    .hero {
+      padding: 48px 0 30px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 43px);
+      letter-spacing: -1.8px;
+      line-height: 1.13;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 22px;
+      align-items: start;
+      padding-bottom: 50px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -.4px;
+    }
+
+    .step {
+      color: var(--green);
+      background: var(--green-light);
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .description {
+      margin: 0 0 23px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .section-label {
+      margin: 20px 0 12px;
+      color: #53665c;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 650;
+      color: #53665c;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 43px 13px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      color: var(--text);
+      outline: none;
+      transition: .2s;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(22,118,83,.10);
+      background: white;
+    }
+
+    .unit {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-btn {
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      color: #52645a;
+      font-size: 11px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .example-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-light);
+    }
+
+    .primary-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 15px;
+      margin-top: 23px;
+      border: none;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-size: 14px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .primary-btn:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    .error {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 9px;
+      background: #fff0f0;
+      color: var(--danger);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .result-card {
+      min-height: 390px;
+    }
+
+    .empty-state {
+      min-height: 310px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .empty-icon {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      border-radius: 23px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 34px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 9px;
+      font-size: 17px;
+    }
+
+    .empty-state p {
+      max-width: 260px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    #result-content {
+      display: none;
+    }
+
+    .result-tag {
+      display: inline-block;
+      margin: 17px 0 10px;
+      padding: 6px 10px;
+      border-radius: 30px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .species {
+      margin: 0;
+      font-size: 29px;
+      letter-spacing: -1px;
+      text-transform: capitalize;
+    }
+
+    .confidence {
+      margin: 8px 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .confidence strong {
+      color: var(--green);
+      font-size: 17px;
+    }
+
+    .probability-heading {
+      display: flex;
+      justify-content: space-between;
+      margin: 22px 0 15px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .probability {
+      margin: 15px 0;
+    }
+
+    .probability-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 12px;
+    }
+
+    .probability-top span:last-child {
+      font-weight: 750;
+    }
+
+    .track {
+      height: 9px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #edf1ed;
+    }
+
+    .fill {
+      width: 0;
+      height: 100%;
+      border-radius: 10px;
+      background: var(--green);
+      transition: width .6s ease;
+    }
+
+    .time-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+      padding: 13px;
+      border-radius: 10px;
+      background: var(--surface-soft);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .time-value {
+      font-weight: 800;
+      color: var(--green);
+      text-align: right;
+    }
+
+    .time-value.slow {
+      color: var(--danger);
+    }
+
+    .result-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 22px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 35px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .container {
+        width: calc(100% - 26px);
+      }
+
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        font-size: 10px;
+      }
+
+      .hero p {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-icon">✿</div>
+      <span>Iris AI Classifier</span>
+    </div>
+    <div class="status">
+      <span class="status-dot"></span>
+      Modelo disponible
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <div class="eyebrow">Machine Learning · Clasificación</div>
+    <h1>Descubre la especie<br>de tu flor Iris.</h1>
+    <p>
+      Introduce las dimensiones de los sépalos y pétalos.
+      Nuestro modelo de inteligencia artificial analizará
+      las características y predecirá la especie correspondiente.
+    </p>
+  </section>
+
+  <section class="layout">
+
+    <div class="card">
+      <div class="card-heading">
+        <h2>Mediciones de la flor</h2>
+        <span class="step">PASO 01</span>
+      </div>
+
+      <p class="description">
+        Introduce las cuatro características físicas en centímetros.
+      </p>
+
+      <form id="form" novalidate>
+
+        <div class="section-label">Dimensiones del sépalo</div>
+
+        <div class="fields">
+          <div class="field">
+            <label for="sepal_length">Longitud del sépalo</label>
+            <div class="input-wrap">
+              <input id="sepal_length" type="number"
+                min="0.01" max="15" step="any"
+                placeholder="Ej. 5.1" required>
+              <span class="unit">cm</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sepal_width">Ancho del sépalo</label>
+            <div class="input-wrap">
+              <input id="sepal_width" type="number"
+                min="0.01" max="15" step="any"
+                placeholder="Ej. 3.5" required>
+              <span class="unit">cm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Dimensiones del pétalo</div>
+
+        <div class="fields">
+          <div class="field">
+            <label for="petal_length">Longitud del pétalo</label>
+            <div class="input-wrap">
+              <input id="petal_length" type="number"
+                min="0.01" max="15" step="any"
+                placeholder="Ej. 1.4" required>
+              <span class="unit">cm</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="petal_width">Ancho del pétalo</label>
+            <div class="input-wrap">
+              <input id="petal_width" type="number"
+                min="0.01" max="15" step="any"
+                placeholder="Ej. 0.2" required>
+              <span class="unit">cm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Pruebas rápidas</div>
+
+        <div class="examples">
+          <button type="button" class="example-btn"
+            data-v="5.1,3.5,1.4,0.2">Setosa</button>
+
+          <button type="button" class="example-btn"
+            data-v="7.0,3.2,4.7,1.4">Versicolor</button>
+
+          <button type="button" class="example-btn"
+            data-v="6.3,3.3,6.0,2.5">Virginica</button>
+        </div>
+
+        <button type="submit" class="primary-btn" id="submit-btn">
+          <span>✦</span>
+          Analizar especie
+        </button>
+
+        <div class="error" id="error" role="alert"></div>
+
+      </form>
+    </div>
+
+    <div class="card result-card">
+
+      <div class="card-heading">
+        <h2>Resultado del análisis</h2>
+        <span class="step">PASO 02</span>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">✿</div>
+        <h3>Esperando mediciones</h3>
+        <p>
+          Completa los cuatro campos y ejecuta el análisis
+          para visualizar la especie identificada.
+        </p>
+      </div>
+
+      <div id="result-content">
+
+        <span class="result-tag">Predicción completada</span>
+
+        <h3 class="species" id="species">Iris Setosa</h3>
+
+        <p class="confidence">
+          Confianza del modelo:
+          <strong id="confidence">100%</strong>
+        </p>
+
+        <div class="probability-heading">
+          <span>Distribución de probabilidades</span>
+          <span>RESULTADO</span>
+        </div>
+
+        <div id="bars"></div>
+
+        <div class="time-box">
+          <span>Tiempo total de respuesta</span>
+          <span class="time-value" id="time">0 ms</span>
+        </div>
+
+        <p class="result-note" id="result-note">
+          Las probabilidades representan las estimaciones
+          generadas por el clasificador.
+        </p>
+
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer>
+  Iris AI Classifier · Microservicio de clasificación con Machine Learning
+  <br>
+  Modelo Decision Tree · Dataset Iris
+</footer>
+
+<script>
+  const ids = [
+    "sepal_length",
+    "sepal_width",
+    "petal_length",
+    "petal_width"
+  ];
+
+  const form = document.getElementById("form");
+  const errorEl = document.getElementById("error");
+  const submitBtn = document.getElementById("submit-btn");
+
+  // Cargar ejemplos de las tres especies.
+  document.querySelectorAll("[data-v]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      btn.dataset.v.split(",").forEach((value, index) => {
+        document.getElementById(ids[index]).value = value;
+      });
+
+      errorEl.style.display = "none";
+    });
+  });
+
+  // Enviar mediciones a la API.
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    errorEl.style.display = "none";
+
+    const body = {};
+
+    for (const id of ids) {
+      const input = document.getElementById(id);
+      const value = input.value.trim() === ""
+        ? NaN
+        : Number(input.value);
+
+      if (!Number.isFinite(value) || value <= 0 || value > 15) {
+        return showError(
+          "Completa los cuatro campos con valores mayores que 0 y hasta 15 cm."
+        );
+      }
+
+      body[id] = value;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Analizando...";
+
+    try {
+      const start = performance.now();
+
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+      const totalTime = performance.now() - start;
+
+      if (!response.ok) {
+        const detail = typeof data.detail === "string"
+          ? data.detail
+          : "Los datos enviados no son válidos.";
+
+        return showError(detail);
+      }
+
+      renderResult(data, totalTime);
+
+    } catch (error) {
+      showError(
+        "No se pudo conectar con el servidor. Comprueba que FastAPI esté activo."
+      );
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>✦</span> Analizar especie";
+    }
+  });
+
+  function showError(message) {
+    errorEl.textContent = message;
+    errorEl.style.display = "block";
+  }
+
+  // Mostrar los resultados de la clasificación.
+  function renderResult(data, totalTime) {
+    document.getElementById("empty-state").style.display = "none";
+    document.getElementById("result-content").style.display = "block";
+
+    document.getElementById("species").textContent =
+      "Iris " + data.prediction;
+
+    document.getElementById("confidence").textContent =
+      (data.confidence * 100).toFixed(1) + "%";
+
+    const bars = document.getElementById("bars");
+    bars.innerHTML = "";
+
+    for (const [name, probability] of Object.entries(data.probabilities)) {
+      const percentage = probability * 100;
+
+      const row = document.createElement("div");
+      row.className = "probability";
+
+      const top = document.createElement("div");
+      top.className = "probability-top";
+
+      const label = document.createElement("span");
+      label.textContent = "Iris " + name;
+
+      const value = document.createElement("span");
+      value.textContent = percentage.toFixed(1) + "%";
+
+      top.append(label, value);
+
+      const track = document.createElement("div");
+      track.className = "track";
+
+      const fill = document.createElement("div");
+      fill.className = "fill";
+
+      track.appendChild(fill);
+      row.append(top, track);
+      bars.appendChild(row);
+
+      requestAnimationFrame(() => {
+        fill.style.width = percentage + "%";
+      });
+    }
+
+    const timeElement = document.getElementById("time");
+    timeElement.textContent = totalTime.toFixed(2) + " ms";
+    timeElement.classList.toggle("slow", totalTime > 100);
+
+    document.getElementById("result-note").textContent =
+      "Inferencia del modelo: " + data.inference_ms +
+      " ms. Tiempo total medido desde el navegador: " +
+      totalTime.toFixed(2) + " ms.";
+  }
+</script>
+
+</body>
+</html>
+
